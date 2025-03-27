@@ -1,13 +1,27 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+from flask_httpauth import HTTPBasicAuth
+from werkzeug.security import generate_password_hash, check_password_hash
 import os
 
 app = Flask(__name__)
-CORS(app)  # Habilita CORS para permitir conexiones desde el frontend
+CORS(app)
+auth = HTTPBasicAuth()
+
+# Usuarios válidos
+users = {
+    "admin": generate_password_hash("secure123")
+}
+
+@auth.verify_password
+def verify_password(username, password):
+    if username in users and check_password_hash(users.get(username), password):
+        return username
 
 DEBUG_MODE = os.getenv("DEBUG_MODE", "False") == "True"
 
 @app.route('/analyze', methods=['POST'])
+@auth.login_required
 def analyze():
     data = request.get_json()
     text = data.get('text', '')
