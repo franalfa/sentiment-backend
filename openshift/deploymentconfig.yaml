@@ -1,0 +1,24 @@
+apiVersion: apps.openshift.io/v1 
+kind: DeploymentConfig 
+metadata: 
+"  name: sentiment-backend" 
+spec: 
+"  replicas: 1" 
+"  selector:" 
+"    app: sentiment-backend" 
+"  template:" 
+"    metadata:" 
+"      labels:" 
+"        app: sentiment-backend" 
+"    spec:" 
+"      containers:" 
+"        - name: sentiment-backend" 
+"          image: sentiment-backend:latest" 
+"          ports:" 
+"            - containerPort: 8080" 
+"          env:" 
+"            - name: DEBUG_MODE" 
+"              value: \"False\"" 
+"  triggers:" 
+"    - type: ConfigChange" 
+"    - type: ImageChange" 
